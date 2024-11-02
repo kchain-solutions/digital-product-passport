@@ -34,8 +34,8 @@ module dpp::dpp{
         signer_addr: address,
         product_id: String,
         operation: Role,
-        description: String,
         uri: String,
+        proof: String,
         optional_data: String,
         previous_tx: String,
         timestamp: u64
@@ -109,8 +109,8 @@ module dpp::dpp{
        public entry fun trace_event(
         audit_trail_cap: &TraceCapability,
         product_id: String,
-        description: String,
         uri: String,
+        proof: String,
         optional_data: String,
         previous_tx: String,
         ctx: &mut TxContext
@@ -119,8 +119,8 @@ module dpp::dpp{
             signer_addr: tx_context::sender(ctx),
             product_id,
             operation: audit_trail_cap.role,
-            description,
             uri,
+            proof,
             optional_data,
             previous_tx,
             timestamp: ctx.epoch_timestamp_ms()

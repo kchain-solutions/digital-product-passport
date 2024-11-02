@@ -1,7 +1,6 @@
 
 module dpp::dpp{
     use sui::event;
-    use sui::clock;
     use std::string::{utf8, String}; 
 
     const EINVALID_ROLE: u64 = 1;
@@ -61,7 +60,7 @@ module dpp::dpp{
         }, recipient);
     }
 
-    public entry fun grant_product_transaction_capability(
+    public entry fun grant_trace_capability(
         _: &DidsIssuerCapability, 
         recipient: address, 
         role_str: String, 
@@ -107,7 +106,7 @@ module dpp::dpp{
         }
     }
 
-       public entry fun create_product_transaction_event(
+       public entry fun trace_event(
         audit_trail_cap: &TraceCapability,
         product_id: String,
         description: String,

@@ -5,6 +5,20 @@ module dpp::dpp{
 
     const EINVALID_ROLE: u64 = 1;
 
+    //Capabilities
+    public struct AdminCapability has key {
+        id: UID
+    }
+
+    public struct VCIssuerCapability has key {
+        id: UID
+    }
+
+    public struct TraceCapability has key, store {
+        id: UID,
+        role: Role
+    }
+
     public enum Role has store, copy, drop {
         Manufacturer,
         Distributor,
@@ -13,20 +27,6 @@ module dpp::dpp{
         Refurbisher,
         Recycler,
         Auditor,
-    }
-
-    //Role Capabilities
-    public struct AdminCapability has key {
-        id: UID
-    }
-
-    public struct DidsIssuerCapability has key {
-        id: UID
-    }
-
-    public struct TraceCapability has key, store {
-        id: UID,
-        role: Role
     }
 
     // Event
@@ -54,14 +54,14 @@ module dpp::dpp{
         }, recipient);
     }
 
-    public entry fun grant_dids_issuer_capability(_: &AdminCapability, recipient: address, ctx: &mut TxContext){
-        transfer::transfer(DidsIssuerCapability {
+    public entry fun grant_vc_issuer_capability(_: &AdminCapability, recipient: address, ctx: &mut TxContext){
+        transfer::transfer(VCIssuerCapability {
             id: object::new(ctx)
         }, recipient);
     }
 
     public entry fun grant_trace_capability(
-        _: &DidsIssuerCapability, 
+        _: &VCIssuerCapability, 
         recipient: address, 
         role_str: String, 
         ctx: &mut TxContext
@@ -106,7 +106,7 @@ module dpp::dpp{
         }
     }
 
-       public entry fun trace_event(
+    public entry fun trace_event(
         audit_trail_cap: &TraceCapability,
         product_id: String,
         uri: String,

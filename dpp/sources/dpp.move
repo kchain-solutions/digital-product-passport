@@ -34,8 +34,8 @@ module dpp::dpp{
         signer_addr: address,
         product_id: String,
         operation: Role,
-        uri: String,
-        proof: String,
+        uris: vector<String>, 
+        proofs: vector<String>,
         optional_data: String,
         previous_tx: String,
         timestamp: u64
@@ -109,8 +109,8 @@ module dpp::dpp{
     public entry fun trace_event(
         audit_trail_cap: &TraceCapability,
         product_id: String,
-        uri: String,
-        proof: String,
+        uris: vector<String>,
+        proofs: vector<String>,
         optional_data: String,
         previous_tx: String,
         ctx: &mut TxContext
@@ -119,12 +119,145 @@ module dpp::dpp{
             signer_addr: tx_context::sender(ctx),
             product_id,
             operation: audit_trail_cap.role,
-            uri,
-            proof,
+            uris,
+            proofs,
             optional_data,
             previous_tx,
             timestamp: ctx.epoch_timestamp_ms()
         });
+    }
+
+    #[test]
+    fun test_grant_vc_issuer_capability() {
+        use sui::test_scenario;
+
+        let admin: address = @0xAD;
+        let vc: address = @0x01;
+
+        let mut scenario = test_scenario::begin(admin);
+        {
+            init(scenario.ctx());
+        };
+
+        scenario.next_tx(admin);
+        {
+            let adminCapability = scenario.take_from_sender<AdminCapability>();
+            grant_vc_issuer_capability(&adminCapability, vc, scenario.ctx());
+            scenario.return_to_sender(adminCapability);
+            
+        };
+
+        scenario.end();
+    }
+
+    #[test]
+    fun test_grant_admin_capability() {
+        use sui::test_scenario;
+
+        let admin: address = @0xAD;
+        let new_admin: address = @0x01;
+
+        let mut scenario = test_scenario::begin(admin);
+        {
+            init(scenario.ctx());
+        };
+
+        scenario.next_tx(admin);
+        {
+            let adminCapability = scenario.take_from_sender<AdminCapability>();
+            grant_admin_capability(&adminCapability, new_admin, scenario.ctx());
+            scenario.return_to_sender(adminCapability);
+            
+        };
+
+        scenario.end();
+    }
+
+    #[test]
+    #[expected_failure (abort_code = EINVALID_ROLE)]
+    fun fail_grant_trace_capability() {
+        use sui::test_scenario;
+
+        let admin: address = @0xAD;
+        let vc_issuer: address = @0x01;
+        let recipient: address = @0x02;
+
+        let mut scenario = test_scenario::begin(admin);
+        {
+            init(scenario.ctx());
+        };
+
+        scenario.next_tx(admin);
+        {
+            let admin_capability = scenario.take_from_sender<AdminCapability>();
+            grant_vc_issuer_capability(&admin_capability, vc_issuer, scenario.ctx());
+            scenario.return_to_sender(admin_capability);
+        };
+
+        scenario.next_tx(vc_issuer);
+        {
+            let vc_issuer_capability = scenario.take_from_sender<VCIssuerCapability>();
+            let role_str = utf8(b"INVALID ROLE"); 
+            grant_trace_capability(&vc_issuer_capability, recipient, role_str, scenario.ctx());
+            scenario.return_to_sender(vc_issuer_capability);
+        };
+
+        scenario.end();
+    }
+
+
+    #[test]
+    fun test_trace_event() {
+        use sui::test_scenario;
+
+        let admin: address = @0xAD;
+        let vc_issuer: address = @0x01;
+        let trace_user: address = @0x02;
+
+        let mut scenario = test_scenario::begin(admin);
+        {
+            init(scenario.ctx());
+        };
+
+    
+        scenario.next_tx(admin);
+        {
+            let admin_capability = scenario.take_from_sender<AdminCapability>();
+            grant_vc_issuer_capability(&admin_capability, vc_issuer, scenario.ctx());
+            scenario.return_to_sender(admin_capability);
+        };
+
+    
+        scenario.next_tx(vc_issuer);
+        {
+            let vc_issuer_capability = scenario.take_from_sender<VCIssuerCapability>();
+            let role_str = utf8(b"manufacturer"); 
+            grant_trace_capability(&vc_issuer_capability, trace_user, role_str, scenario.ctx());
+            scenario.return_to_sender(vc_issuer_capability);
+        };
+
+        scenario.next_tx(trace_user);
+        {
+            let trace_capability = scenario.take_from_sender<TraceCapability>();
+            let product_id = utf8(b"Product123");
+            let uris = vector::empty<String>();
+            let proofs = vector::empty<String>();
+            let optional_data = utf8(b"{}");
+            let previous_tx = utf8(b"PreviousTxHash");
+
+            trace_event(
+                &trace_capability,
+                product_id,
+                uris,
+                proofs,
+                optional_data,
+                previous_tx,
+                scenario.ctx(),
+            );
+            scenario.return_to_sender(trace_capability);
+        };
+
+        scenario.end();
     }
 }
 

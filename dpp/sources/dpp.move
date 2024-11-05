@@ -44,7 +44,6 @@ module dpp::dpp{
         proofs: vector<String>,
         optional_data: String,
         previous_tx: String,
-        timestamp: u64
     } 
 
     public struct CapabilityEvent has drop, store, copy {
@@ -153,8 +152,7 @@ module dpp::dpp{
             uris,
             proofs,
             optional_data,
-            previous_tx,
-            timestamp: ctx.epoch_timestamp_ms()
+            previous_tx
         });
     }
 

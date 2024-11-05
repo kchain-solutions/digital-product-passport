@@ -23,7 +23,7 @@ module dpp::dpp{
         Manufacturer,
         Distributor,
         Retailer,
-        Maintenance,
+        Maintainer,
         Refurbisher,
         Recycler,
         Auditor,
@@ -106,10 +106,10 @@ module dpp::dpp{
                 id: object::new(ctx),
                 role: Role::Retailer
             }, recipient_addr);
-        } else if (role_str == utf8(b"maintenance")) {
+        } else if (role_str == utf8(b"maintainer")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
-                role: Role::Maintenance
+                role: Role::Maintainer
             }, recipient_addr);
         } else if (role_str == utf8(b"refurbisher")) {
             transfer::public_transfer(TraceCapability {

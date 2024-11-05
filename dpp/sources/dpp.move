@@ -29,6 +29,12 @@ module dpp::dpp{
         Auditor,
     }
 
+    public enum CapabilityType has store, copy, drop {
+        Admin,
+        VcIssuer,
+        User
+    }
+
     // Event
     public struct TraceableEvent has drop, store, copy {
         signer_addr: address,
@@ -41,6 +47,12 @@ module dpp::dpp{
         timestamp: u64
     } 
 
+    public struct CapabilityEvent has drop, store, copy {
+        signer_addr: address,
+        recipient_addr: address,
+        capability_type: CapabilityType
+    }
+
     fun init(ctx: &mut TxContext){
         let sender_addr = tx_context::sender(ctx);
         transfer::transfer(AdminCapability {
@@ -48,21 +60,34 @@ module dpp::dpp{
         }, sender_addr);
     } 
 
-    public entry fun grant_admin_capability(_: &AdminCapability, recipient: address, ctx: &mut TxContext){
+    public entry fun grant_admin_capability(_: &AdminCapability, recipient_addr: address, ctx: &mut TxContext){
         transfer::transfer(AdminCapability {
             id: object::new(ctx)
-        }, recipient);
+        }, recipient_addr);
+
+
+        event::emit<CapabilityEvent>(CapabilityEvent{
+            signer_addr: tx_context::sender(ctx),
+            recipient_addr,
+            capability_type: CapabilityType::Admin
+        });
     }
 
-    public entry fun grant_vc_issuer_capability(_: &AdminCapability, recipient: address, ctx: &mut TxContext){
+    public entry fun grant_vc_issuer_capability(_: &AdminCapability, recipient_addr: address, ctx: &mut TxContext){
         transfer::transfer(VCIssuerCapability {
             id: object::new(ctx)
-        }, recipient);
+        }, recipient_addr);
+
+        event::emit<CapabilityEvent>(CapabilityEvent{
+            signer_addr: tx_context::sender(ctx),
+            recipient_addr,
+            capability_type: CapabilityType::VcIssuer
+        });
     }
 
     public entry fun grant_trace_capability(
         _: &VCIssuerCapability, 
-        recipient: address, 
+        recipient_addr: address, 
         role_str: String, 
         ctx: &mut TxContext
     ) {
@@ -70,40 +95,46 @@ module dpp::dpp{
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Manufacturer
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"distributor")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Distributor
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"retailer")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Retailer
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"maintenance")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Maintenance
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"refurbisher")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Refurbisher
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"recycler")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Recycler
-            }, recipient);
+            }, recipient_addr);
         } else if (role_str == utf8(b"auditor")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
                 role: Role::Auditor
-            }, recipient);
+            }, recipient_addr);
         } else {
             abort EINVALID_ROLE 
-        }
+        };
+
+        event::emit<CapabilityEvent>(CapabilityEvent{
+            signer_addr: tx_context::sender(ctx),
+            recipient_addr,
+            capability_type: CapabilityType::User
+        });
     }
 
     public entry fun trace_event(
@@ -179,8 +210,8 @@ module dpp::dpp{
         use sui::test_scenario;
 
         let admin: address = @0xAD;
-        let vc_issuer: address = @0x01;
-        let recipient: address = @0x02;
+        let vc_issuer_addr: address = @0x01;
+        let recipient_addr: address = @0x02;
 
         let mut scenario = test_scenario::begin(admin);
         {
@@ -190,15 +221,15 @@ module dpp::dpp{
         scenario.next_tx(admin);
         {
             let admin_capability = scenario.take_from_sender<AdminCapability>();
-            grant_vc_issuer_capability(&admin_capability, vc_issuer, scenario.ctx());
+            grant_vc_issuer_capability(&admin_capability, vc_issuer_addr, scenario.ctx());
             scenario.return_to_sender(admin_capability);
         };
 
-        scenario.next_tx(vc_issuer);
+        scenario.next_tx(vc_issuer_addr);
         {
             let vc_issuer_capability = scenario.take_from_sender<VCIssuerCapability>();
             let role_str = utf8(b"INVALID ROLE"); 
-            grant_trace_capability(&vc_issuer_capability, recipient, role_str, scenario.ctx());
+            grant_trace_capability(&vc_issuer_capability, recipient_addr, role_str, scenario.ctx());
             scenario.return_to_sender(vc_issuer_capability);
         };
 
@@ -211,7 +242,7 @@ module dpp::dpp{
         use sui::test_scenario;
 
         let admin: address = @0xAD;
-        let vc_issuer: address = @0x01;
+        let vc_issuer_addr: address = @0x01;
         let trace_user: address = @0x02;
 
         let mut scenario = test_scenario::begin(admin);
@@ -223,12 +254,12 @@ module dpp::dpp{
         scenario.next_tx(admin);
         {
             let admin_capability = scenario.take_from_sender<AdminCapability>();
-            grant_vc_issuer_capability(&admin_capability, vc_issuer, scenario.ctx());
+            grant_vc_issuer_capability(&admin_capability, vc_issuer_addr, scenario.ctx());
             scenario.return_to_sender(admin_capability);
         };
 
     
-        scenario.next_tx(vc_issuer);
+        scenario.next_tx(vc_issuer_addr);
         {
             let vc_issuer_capability = scenario.take_from_sender<VCIssuerCapability>();
             let role_str = utf8(b"manufacturer"); 

@@ -8,9 +8,9 @@ To facilitate contract management, the **Makefile** includes various commands th
 
 The contract uses a **hierarchical permission system** to manage access and capabilities. Here’s how it works:
 
-- **AdminCapability**: This is the highest level of authority within the system. An entity with `AdminCapability` can grant various other capabilities, including `DidsIssuerCapability` and other `AdminCapability` roles to additional addresses. This role is intended for trusted administrators who manage access and ensure the correct distribution of permissions within the system.
+- **AdminCapability**: This is the highest level of authority within the system. An entity with `AdminCapability` can grant various other capabilities, including `VCIssuerCapability` and other `AdminCapability` roles to additional addresses. This role is intended for trusted administrators who manage access and ensure the correct distribution of permissions within the system.
 
-- **DidsIssuerCapability**: A role granted by an admin, allowing an entity to authorize users with specific roles to write events on the blockchain. This capability enables the creation of `TraceCapability` for roles like Manufacturer, Distributor, Retailer, etc. The DID Issuer cannot grant `AdminCapability` to others, ensuring that only designated administrators control the highest level of access.
+- **VCIssuerCapability**: A role granted by an admin, allowing an entity to authorize users with specific roles to write events on the blockchain. This capability enables the creation of `TraceCapability` for roles like Manufacturer, Distributor, Retailer, etc. The VC Issuer cannot grant `AdminCapability` to others, ensuring that only designated administrators control the highest level of access.
 
 By structuring permissions this way, the system maintains a clear separation of roles: Admins handle governance and permission distribution, while DID Issuers focus on assigning operational roles for traceability and event management.
 
@@ -34,7 +34,7 @@ Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-insta
    ```bash
    make objects-list
    ```
-   Shows all objects associated with the current address, including any `TraceCapability`, `DidsIssuerCapability`, or `AdminCapability`.
+   Shows all objects associated with the current address, including any `TraceCapability`, `VCIssuerCapability`, or `AdminCapability`.
 
 4. **Request Funds (Faucet)**:
    ```bash
@@ -66,11 +66,11 @@ Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-insta
    ```
    Assigns `AdminCapability` to a specific address, authorizing it to grant other capabilities. This is a critical operation reserved for administrators, as they are responsible for defining the access structure.
 
-9. **Grant DID Issuer Capability**:
+9. **Grant VC Issuer Capability**:
    ```bash
-   make grant-dids-issuer-cap
+   make grant-vc-issuer-cap
    ```
-   Grants an address the `DidsIssuerCapability`, allowing it to authorize users to create DIDs and publish events. Only admins can grant this capability.
+   Grants an address the `VCIssuerCapability`, allowing it to authorize users to create DIDs and publish events. Only admins can grant this capability.
 
 10. **Grant Trace Capability**:
     ```bash

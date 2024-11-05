@@ -28,8 +28,8 @@ get-objects:
 grant-admin-cap:
 	sui client call --package <<PACKAGE ID>> --module dpp --function grant_admin_capability --args <<ADMIN_CAP_ID>> <RECIPIENT_ADDR> --gas-budget 10000000
 
-grant-dids-issuer-cap:
-	sui client call --package <<PACKAGE ID>> --module dpp --function grant_dids_issuer_capability --args <<ADMIN_CAP_ID>> <RECIPIENT_ADDR> --gas-budget 10000000
+grant-vc-issuer-cap:
+	sui client call --package <<PACKAGE ID>> --module dpp --function grant_vc_issuer_capability --args <<ADMIN_CAP_ID>> <RECIPIENT_ADDR> --gas-budget 10000000
 
 grant-trace-cap:
 	sui client call --package <<PACKAGE ID>> --module dpp --function grant_trace_capability --args <<DIDS_ISSUER_CAP_ID>> <RECIPIENT_ADDR> manufacturer --gas-budget 10000000

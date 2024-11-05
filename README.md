@@ -4,7 +4,7 @@ The Move contract **dpp.move** defines a notarization system to track key events
 
 To facilitate contract management, the **Makefile** includes various commands that automate tasks such as creating addresses, publishing the contract, and granting capabilities.
 
-## Permission Hierarchy: Admin and DID Issuer
+## Permission Hierarchy: Admin and VC Issuer
 
 The contract uses a **hierarchical permission system** to manage access and capabilities. Here’s how it works:
 

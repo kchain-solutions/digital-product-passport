@@ -1,6 +1,6 @@
 # (DPP) Digital Product Passport
 
-The Move contract **dpp.move** defines a notarization system to track key events throughout the lifecycle of a product. It includes distinct roles (e.g., Manufacturer, Distributor, Retailer) and uses events to log operations such as creation, distribution, sale, maintenance, and recycling. Permissions are managed through capabilities (`Capabilities`), assigned by authorized entities via specific contract functions.
+The Move contract **dpp.move** defines a notarization system to track key events throughout the lifecycle of a product. It includes distinct roles (e.g., Manufacturer, Distributor, Retailer) and uses events to log operations such as creation, distribution, sale, maintenance, and recycling. Permissions are managed through capabilities, assigned by authorized entities via specific contract functions.
 
 To facilitate contract management, the **Makefile** includes various commands that automate tasks such as creating addresses, publishing the contract, and granting capabilities.
 
@@ -49,53 +49,41 @@ Install [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-insta
    ```
    Compiles the Move contract located in the `./dpp` folder, checking for any errors. This compilation step is essential before publishing or upgrading the contract.
 
-6. **Upgrade the Contract**:
-   ```bash
-   make upgrade-contract
-   ```
-   Upgrades an existing contract version. This is useful when making changes or improvements to the code and wanting to apply them on-chain.
-
-7. **Test the Contract**:
+6. **Test the Contract**:
    ```bash
    make test-contract
    ```
    Runs a series of automated tests to verify the functionality of the dpp.move contract.
 
-8. **Publish the Contract**:
+7. **Publish the Contract**:
    ```bash
    make publish-contract
    ```
    Publishes the `dpp` contract to the blockchain, making it available for operations. This command is used when deploying the contract for the first time or after significant updates.
 
-9.  **Grant Admin Capability**:
+8.  **Grant Admin Capability**:
    ```bash
    make grant-admin-cap
    ```
    Assigns `AdminCapability` to a specific address, authorizing it to grant other capabilities. This is a critical operation reserved for administrators, as they are responsible for defining the access structure.
 
-10. **Grant VC Issuer Capability**:
+9.  **Grant VC Issuer Capability**:
    ```bash
    make grant-vc-issuer-cap
    ```
-   Grants an address the `VCIssuerCapability`, allowing it to authorize users to create DIDs and publish events. Only admins can grant this capability.
+   Grants an address the `VCIssuerCapability`, allowing it to create VC. Only admins can grant this capability.
 
-11. **Grant Trace Capability**:
+10. **Grant Trace Capability**:
     ```bash
     make grant-trace-cap
     ```
-    This command assigns a specific `TraceCapability` to an address with a defined role (such as `manufacturer`, `distributor`, etc.). Roles determine which operations the address can perform on the contract.
+    This command assigns a specific `TraceCapability` to an address with a defined role (such as `manufacturer`, `distributor`, etc.).
 
-12. **Record an Event**:
+11. **Record an Event**:
     ```bash
     make trace_event
     ```
     Logs an event in the product lifecycle. This command requires that the address holds the necessary `TraceCapability`. Each event is recorded on-chain with a timestamp, product ID, proof, and other relevant information.
-
-13. **Convert Keys**:
-    ```bash
-    make convert-key
-    ```
-    Uses the `sui keytool` to convert an existing private key into keystore format. Useful when managing external keys or importing keys from other formats.
 
 
 ## Usage Example

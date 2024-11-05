@@ -23,7 +23,7 @@ module dpp::dpp{
         Manufacturer,
         Distributor,
         Retailer,
-        Maintenance,
+        Maintainer,
         Refurbisher,
         Recycler,
         Auditor,
@@ -37,14 +37,12 @@ module dpp::dpp{
 
     // Event
     public struct TraceableEvent has drop, store, copy {
-        signer_addr: address,
-        product_id: String,
-        operation: Role,
+        signer_addr: address,   // User identifier
+        product_id: String,     // SGTIN Identifier
         uris: vector<String>, 
         proofs: vector<String>,
         optional_data: String,
         previous_tx: String,
-        timestamp: u64
     } 
 
     public struct CapabilityEvent has drop, store, copy {
@@ -106,10 +104,10 @@ module dpp::dpp{
                 id: object::new(ctx),
                 role: Role::Retailer
             }, recipient_addr);
-        } else if (role_str == utf8(b"maintenance")) {
+        } else if (role_str == utf8(b"maintainer")) {
             transfer::public_transfer(TraceCapability {
                 id: object::new(ctx),
-                role: Role::Maintenance
+                role: Role::Maintainer
             }, recipient_addr);
         } else if (role_str == utf8(b"refurbisher")) {
             transfer::public_transfer(TraceCapability {
@@ -138,7 +136,7 @@ module dpp::dpp{
     }
 
     public entry fun trace_event(
-        audit_trail_cap: &TraceCapability,
+        _: &TraceCapability,
         product_id: String,
         uris: vector<String>,
         proofs: vector<String>,
@@ -149,12 +147,10 @@ module dpp::dpp{
         event::emit<TraceableEvent>( TraceableEvent {
             signer_addr: tx_context::sender(ctx),
             product_id,
-            operation: audit_trail_cap.role,
             uris,
             proofs,
             optional_data,
-            previous_tx,
-            timestamp: ctx.epoch_timestamp_ms()
+            previous_tx
         });
     }
 

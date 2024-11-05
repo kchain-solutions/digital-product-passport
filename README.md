@@ -12,13 +12,12 @@ The contract uses a **hierarchical permission system** to manage access and capa
 
 - **VCIssuerCapability**: A role granted by an admin, allowing an entity to authorize users with specific roles to write events on the blockchain. This capability enables the creation of `TraceCapability` for roles like Manufacturer, Distributor, Retailer, etc. The VC Issuer cannot grant `AdminCapability` to others, ensuring that only designated administrators control the highest level of access.
 
-By structuring permissions this way, the system maintains a clear separation of roles: Admins handle governance and permission distribution, while DID Issuers focus on assigning operational roles for traceability and event management.
+By structuring permissions this way, the system maintains a clear separation of roles: Admins handle governance and permission distribution, while VC Issuers focus on assigning operational roles for traceability and event management.
 
----
 
 ## Makefile Usage Instructions
 
-Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-install)
+Install [Sui CLI](https://docs.sui.io/guides/developer/getting-started/sui-install)
 
 1. **List Addresses**:
    ```bash
@@ -56,43 +55,48 @@ Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-insta
    ```
    Upgrades an existing contract version. This is useful when making changes or improvements to the code and wanting to apply them on-chain.
 
-7. **Publish the Contract**:
+7. **Test the Contract**:
+   ```bash
+   make test-contract
+   ```
+   Runs a series of automated tests to verify the functionality of the dpp.move contract.
+
+8. **Publish the Contract**:
    ```bash
    make publish-contract
    ```
    Publishes the `dpp` contract to the blockchain, making it available for operations. This command is used when deploying the contract for the first time or after significant updates.
 
-8. **Grant Admin Capability**:
+9.  **Grant Admin Capability**:
    ```bash
    make grant-admin-cap
    ```
    Assigns `AdminCapability` to a specific address, authorizing it to grant other capabilities. This is a critical operation reserved for administrators, as they are responsible for defining the access structure.
 
-9. **Grant VC Issuer Capability**:
+10. **Grant VC Issuer Capability**:
    ```bash
    make grant-vc-issuer-cap
    ```
    Grants an address the `VCIssuerCapability`, allowing it to authorize users to create DIDs and publish events. Only admins can grant this capability.
 
-10. **Grant Trace Capability**:
+11. **Grant Trace Capability**:
     ```bash
     make grant-trace-cap
     ```
     This command assigns a specific `TraceCapability` to an address with a defined role (such as `manufacturer`, `distributor`, etc.). Roles determine which operations the address can perform on the contract.
 
-11. **Record an Event**:
+12. **Record an Event**:
     ```bash
     make trace_event
     ```
     Logs an event in the product lifecycle. This command requires that the address holds the necessary `TraceCapability`. Each event is recorded on-chain with a timestamp, product ID, proof, and other relevant information.
 
-12. **Convert Keys**:
+13. **Convert Keys**:
     ```bash
     make convert-key
     ```
     Uses the `sui keytool` to convert an existing private key into keystore format. Useful when managing external keys or importing keys from other formats.
 
----
 
 ## Usage Example
 To record a `distribution event`, follow these steps:
@@ -142,72 +146,6 @@ The following GraphQL query retrieves specific events related to a particular ev
 
 ### Example Result
 Here is an example of the JSON response format you may receive:
-
-```json
-{
-  "data": {
-    "events": {
-      "nodes": [
-        {
-          "sender": {
-            "address": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
-          },
-          "transactionBlock": {
-            "digest": "6jEWCTzmmCE3tqiZD8gdvkEPJGyAeYj5z5TNtYxLetnt"
-          },
-          "timestamp": "2024-11-04T11:18:20.870Z",
-          "contents": {
-            "json": {
-              "signer_addr": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045",
-              "product_id": "product123",
-              "operation": {
-                "Manufacturer": {}
-              },
-              "uris": [
-                "https://example.com/uri1",
-                "https://example.com/uri2"
-              ],
-              "proofs": [
-                "proof1",
-                "proof2"
-              ],
-              "optional_data": "optional data",
-              "previous_tx": "previous transaction hash",
-              "timestamp": "1730663875132"
-            }
-          }
-        }
-      ]
-    }
-  }
-}
-
-Click [online testnet ide](https://sui-testnet.mystenlabs.com/graphql)
-
-**Query example**
-   ```graphql
-   {
-   events(
-      filter: {
-         eventType: "0x0d087311f002d3204e364b1c5e3159ff1f0c975edb8df367d78e28d1716a9c67::dpp::TraceableEvent"
-         sender: "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
-      }
-   ) {
-      nodes {
-         sender {
-         address
-         }
-         transactionBlock{
-         digest
-         }
-         timestamp
-         contents {
-         json
-         }
-      }
-   }
-   }
-```
 
 ```json
 {

@@ -4,7 +4,7 @@ The Move contract **dpp.move** defines a notarization system to track key events
 
 To facilitate contract management, the **Makefile** includes various commands that automate tasks such as creating addresses, publishing the contract, and granting capabilities.
 
-### Permission Hierarchy: Admin and DID Issuer
+## Permission Hierarchy: Admin and DID Issuer
 
 The contract uses a **hierarchical permission system** to manage access and capabilities. Here’s how it works:
 
@@ -14,7 +14,9 @@ The contract uses a **hierarchical permission system** to manage access and capa
 
 By structuring permissions this way, the system maintains a clear separation of roles: Admins handle governance and permission distribution, while DID Issuers focus on assigning operational roles for traceability and event management.
 
-### Makefile Usage Instructions
+---
+
+## Makefile Usage Instructions
 
 Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-install)
 
@@ -90,5 +92,159 @@ Install [sui cli](https://docs.sui.io/guides/developer/getting-started/sui-insta
     ```
     Uses the `sui keytool` to convert an existing private key into keystore format. Useful when managing external keys or importing keys from other formats.
 
-### Usage Example
-To record a distribution event, first assign the `TraceCapability` to an address with the `distributor` role. Then, use `trace_event` to log the distribution operation.
+---
+
+## Usage Example
+To record a `distribution event`, follow these steps:
+
+1. **Assign `VCIssuerCapability`**: Use the `make grant-vc-issuer-cap` command to grant an address the role of VC Issuer. This role authorizes the address to grant other operational capabilities, such as `TraceCapability`.
+   
+2. **Assign `TraceCapability` for the distributor role**: Use the `make grant-trace-cap` command to assign an address the `TraceCapability` with the specific role of `distributor`. This enables the address to record events related to distribution.
+
+3. **Record the distribution event**: Once the necessary capabilities have been assigned, use `make trace_event` to log the distribution event on the blockchain. Each event is recorded with a timestamp, product ID, proof, and other relevant information.
+
+**Note**: Remember to update the addresses in the `Makefile` to reflect those used in your environment.
+
+---
+
+## Retrieve Data
+To view and verify recorded events, you can use the Sui testnet GraphQL IDE.
+
+### Accessing Data
+Visit the [Online Testnet IDE](https://sui-testnet.mystenlabs.com/graphql) to query events recorded on the blockchain.
+
+### Query Example
+The following GraphQL query retrieves specific events related to a particular event type and sender:
+
+```graphql
+{
+  events(
+    filter: {
+      eventType: "0x0d087311f002d3204e364b1c5e3159ff1f0c975edb8df367d78e28d1716a9c67::dpp::TraceableEvent",
+      sender: "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
+    }
+  ) {
+    nodes {
+      sender {
+        address
+      }
+      transactionBlock {
+        digest
+      }
+      timestamp
+      contents {
+        json
+      }
+    }
+  }
+}
+```
+
+### Example Result
+Here is an example of the JSON response format you may receive:
+
+```json
+{
+  "data": {
+    "events": {
+      "nodes": [
+        {
+          "sender": {
+            "address": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
+          },
+          "transactionBlock": {
+            "digest": "6jEWCTzmmCE3tqiZD8gdvkEPJGyAeYj5z5TNtYxLetnt"
+          },
+          "timestamp": "2024-11-04T11:18:20.870Z",
+          "contents": {
+            "json": {
+              "signer_addr": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045",
+              "product_id": "product123",
+              "operation": {
+                "Manufacturer": {}
+              },
+              "uris": [
+                "https://example.com/uri1",
+                "https://example.com/uri2"
+              ],
+              "proofs": [
+                "proof1",
+                "proof2"
+              ],
+              "optional_data": "optional data",
+              "previous_tx": "previous transaction hash",
+              "timestamp": "1730663875132"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+
+Click [online testnet ide](https://sui-testnet.mystenlabs.com/graphql)
+
+**Query example**
+   ```graphql
+   {
+   events(
+      filter: {
+         eventType: "0x0d087311f002d3204e364b1c5e3159ff1f0c975edb8df367d78e28d1716a9c67::dpp::TraceableEvent"
+         sender: "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
+      }
+   ) {
+      nodes {
+         sender {
+         address
+         }
+         transactionBlock{
+         digest
+         }
+         timestamp
+         contents {
+         json
+         }
+      }
+   }
+   }
+```
+
+```json
+{
+  "data": {
+    "events": {
+      "nodes": [
+        {
+          "sender": {
+            "address": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045"
+          },
+          "transactionBlock": {
+            "digest": "6jEWCTzmmCE3tqiZD8gdvkEPJGyAeYj5z5TNtYxLetnt"
+          },
+          "timestamp": "2024-11-04T11:18:20.870Z",
+          "contents": {
+            "json": {
+              "signer_addr": "0x7e8ec7b99b938d2f2b3238524438d911ce9a6825f43ab98160cbb5bc94382045",
+              "product_id": "product123",
+              "operation": {
+                "Manufacturer": {}
+              },
+              "uris": [
+                "https://example.com/uri1",
+                "https://example.com/uri2"
+              ],
+              "proofs": [
+                "proof1",
+                "proof2"
+              ],
+              "optional_data": "optional data",
+              "previous_tx": "previous transaction hash",
+              "timestamp": "1730663875132"
+            }
+          }
+        }
+      ]
+    }
+  }
+}
+```

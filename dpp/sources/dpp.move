@@ -37,9 +37,8 @@ module dpp::dpp{
 
     // Event
     public struct TraceableEvent has drop, store, copy {
-        signer_addr: address,
-        product_id: String,
-        operation: Role,
+        signer_addr: address,   // User identifier
+        product_id: String,     // SGTIN Identifier
         uris: vector<String>, 
         proofs: vector<String>,
         optional_data: String,
@@ -137,7 +136,7 @@ module dpp::dpp{
     }
 
     public entry fun trace_event(
-        audit_trail_cap: &TraceCapability,
+        _: &TraceCapability,
         product_id: String,
         uris: vector<String>,
         proofs: vector<String>,
@@ -148,7 +147,6 @@ module dpp::dpp{
         event::emit<TraceableEvent>( TraceableEvent {
             signer_addr: tx_context::sender(ctx),
             product_id,
-            operation: audit_trail_cap.role,
             uris,
             proofs,
             optional_data,

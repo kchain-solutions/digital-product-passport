@@ -42,7 +42,7 @@ trace_event:
 	"product123" \
     '[ "https://example.com/uri1", "https://example.com/uri2" ]' \
     '[ "proof1", "proof2" ]' \
-    "{}" \
+    "" \
 	"previous transaction digest" \
     --gas-budget 100000000
 

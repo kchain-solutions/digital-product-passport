@@ -11,7 +11,7 @@ faucet:
 	sui client faucet
 
 build-contract:
-	cd ./dpp && sui move build -d
+	cd ./dpp && sui move build
 
 upgrade-contract:
 	cd ./dpp && sui client upgrade
@@ -20,7 +20,7 @@ test-contract:
 	cd ./dpp && sui move test
 
 publish-contract:
-	cd ./dpp && sui client publish
+	cd ./dpp && sui client publish --gas-budget 1000000000 --skip-dependency-verification
 
 get-objects:
 	sui client objects

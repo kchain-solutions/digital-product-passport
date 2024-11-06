@@ -39,7 +39,6 @@ trace_event:
     --module dpp \
     --function trace_event \
     --args <<TRACE_CAP_ID>> \
-	"product123" \
     '[ "https://example.com/uri1", "https://example.com/uri2" ]' \
     '[ "proof1", "proof2" ]' \
     "" \

@@ -4,7 +4,7 @@ edition = "2024.beta"
 authors = ["Valerio Mellini (valerio@kchain.solutions)"]
 
 [dependencies]
-Sui = { git = "https://github.com/MystenLabs/sui.git", subdir = "crates/sui-framework/packages/sui-framework", rev = "framework/testnet" }
+Iota = { git = "https://github.com/iotaledger/iota.git", subdir = "crates/iota-framework/packages/iota-framework", rev = "framework/testnet" }
 
 [addresses]
 dpp = "0x0"

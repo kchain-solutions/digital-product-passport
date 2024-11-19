@@ -1,6 +1,6 @@
 
 module dpp::dpp{
-    use sui::event;
+    use iota::event;
     use std::string::{utf8, String}; 
 
     const EINVALID_ROLE: u64 = 1;

@@ -2,33 +2,33 @@
 
 [move]
 version = 3
-manifest_digest = "0697318D1B3462509746B793182E6D5DB37E963DFA51FA3CF15B4DB73106DA40"
+manifest_digest = "8367F827A5C4FC3245881432D5B5F7D9455DDF2B6725951E4EB6610811A888EE"
 deps_digest = "F8BBB0CCB2491CA29A3DF03D6F92277A4F3574266507ACD77214D37ECA3F3082"
 dependencies = [
-  { id = "Sui", name = "Sui" },
+  { name = "Iota" },
 ]
 
 [[move.package]]
-id = "MoveStdlib"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "framework/mainnet", subdir = "crates/sui-framework/packages/move-stdlib" }
-
-[[move.package]]
-id = "Sui"
-source = { git = "https://github.com/MystenLabs/sui.git", rev = "framework/mainnet", subdir = "crates/sui-framework/packages/sui-framework" }
+name = "Iota"
+source = { git = "https://github.com/iotaledger/iota.git", rev = "framework/testnet", subdir = "crates/iota-framework/packages/iota-framework" }
 
 dependencies = [
-  { id = "MoveStdlib", name = "MoveStdlib" },
+  { name = "MoveStdlib" },
 ]
 
+[[move.package]]
+name = "MoveStdlib"
+source = { git = "https://github.com/iotaledger/iota.git", rev = "framework/testnet", subdir = "crates/iota-framework/packages/move-stdlib" }
+
 [move.toolchain-version]
-compiler-version = "1.37.1"
+compiler-version = "0.7.2-rc"
 edition = "2024.beta"
-flavor = "sui"
+flavor = "iota"
 
 [env]
 
 [env.testnet]
-chain-id = "4c78adac"
-original-published-id = "0xe412e5373f702197d0e73f1e539b73405018a62d758b6e06f156fc2fa23cd6fb"
-latest-published-id = "0xe412e5373f702197d0e73f1e539b73405018a62d758b6e06f156fc2fa23cd6fb"
+chain-id = "2304aa97"
+original-published-id = "0x3e97836f37f8b545d6108cb9abf155ff872c08aff8d59805f061ea5cd5805109"
+latest-published-id = "0x3e97836f37f8b545d6108cb9abf155ff872c08aff8d59805f061ea5cd5805109"
 published-version = "1"

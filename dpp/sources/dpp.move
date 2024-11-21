@@ -82,6 +82,11 @@ module dpp::dpp{
         });
     }
 
+    public entry fun delete_vc_issuer_capability_capability(vc_issuer_capability: VCIssuerCapability ){
+        let VCIssuerCapability {id} = vc_issuer_capability;
+        object::delete(id);
+    }
+
     public entry fun grant_trace_capability(
         _: &VCIssuerCapability, 
         recipient_addr: address, 

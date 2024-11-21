@@ -22,6 +22,9 @@ test-contract:
 publish-contract:
 	cd ./dpp && iota client publish --gas-budget 1000000000 --skip-dependency-verification
 
+upgrade-contract:
+	cd ./dpp && iota client upgrade --upgrade-capability <<VC_ISSUER_CAP_ID>> --skip-dependency-verification
+
 get-objects:
 	iota client objects
 
